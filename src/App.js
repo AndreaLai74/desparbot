@@ -1,17 +1,23 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import Card from "./Components/Card/Card";
-import Cart from "./Components/Cart/Cart";
+import Form from "./Components/Form/Form";
+import ProductList from "./Components/ProductList/ProductList";
+
+import { useTelegram } from "./hooks/useTelegram";
+import { Route, Routes } from 'react-router-dom';
+
 const { getData } = require("./db/db");
 const foods = getData();
 
-const tele = window.Telegram.WebApp;
 
 function App() {
+
+  const { tg } = useTelegram();
+
   const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
-    tele.ready();
+    tg.ready();
   });
 
   const onAdd = (food) => {
@@ -42,21 +48,24 @@ function App() {
 
   // const onCheckout = () => { };
   const onCheckout = () => {
-    tele.MainButton.text = "Pay :)";
-    tele.MainButton.show();
+    tg.MainButton.text = "Pay :)";
+    tg.MainButton.show();
   };
 
   return (
     <>
-      <h1 className="heading">Order Food</h1>
-      <Cart cartItems={cartItems} onCheckout={onCheckout} />
-      <div className="cards__container">
-        {foods.map((food) => {
-          return (
-            <Card food={food} key={food.id} onAdd={onAdd} onRemove={onRemove} />
-          );
-        })}
-      </div>
+      <Routes>
+        <Route index element={
+          <ProductList
+            foods={foods}
+            onAdd={onAdd}
+            onRemove={onRemove}
+            onCheckout={onCheckout}
+            cartItems={cartItems}
+          />
+        } />
+        <Route path={'/form'} element={<Form />} />
+      </Routes>
     </>
   );
 }
