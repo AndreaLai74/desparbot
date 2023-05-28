@@ -16,14 +16,14 @@ function Form() {
                         cognome
                 };
                 tg.sendData(JSON.stringify(data));
-        }, [nome, cognome]);
+        }, [nome, cognome, tg]);
 
         useEffect(() => {
                 tg.onEvent('mainButtonClicked', onSendData);
                 return () => {
                         tg.offEvent('mainButtonClicked', onSendData);
                 }
-        }, [onSendData]);
+        }, [onSendData, tg]);
 
         const onChangeNome = (e) => {
                 setNome(e.target.value);
@@ -50,7 +50,7 @@ function Form() {
                 } else {
                         tg.MainButton.show();
                 }
-        }, [nome, cognome]);
+        }, [nome, cognome, tg]);
 
         return (
                 <div className={'form'}>
